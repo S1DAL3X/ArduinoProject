@@ -1,12 +1,10 @@
-
-float x = 0; //обьявление переменной и присвоение ей значения ноль
 #include <TM74HC595Display.h> //библиотека индикатора
-#include <EncButton.h>
-//#include "button.h"
 
-byte SCLK = 2; //присвоение выводов идикатора
+//присвоение выводов идикатора
+byte SCLK = 2;
 byte RCLK = 3;
 byte DIO = 4;
+
 TM74HC595Display disp(SCLK, RCLK, DIO);
 unsigned char SYM[19]; //создание массива значений
 unsigned long dispIsrTimer, countTimer;
@@ -15,14 +13,15 @@ unsigned long dispIsrTimer, countTimer;
 const int PIN_BUTTON_1 = 5;
 const int PIN_BUTTON_2 = 6;
 
+float x = 100;
+
 void setup() {
-  symbols();// обьявление пачки символов для работы дисплея
-  Serial.begin(9600);
+  symbols();//обьявление пачки символов для работы дисплея
 }
 
 //Цикл
 void loop(){
-
+  //10 - пин, х - частота
   tone(10, x);
 
   //Получения состояния кнопки 1
@@ -32,38 +31,36 @@ void loop(){
   
   if (buttonState1){
     x += 50;
-    delay(500);
+    delay(400);
     if (x > 1000){
-      x = 0;
+      x = 100;
       disp.clear();
     }
   }
 
   if (buttonState2){
     x -= 50;
-    delay(500);
+    delay(400);
     if (x > 1000){
-      x = 0;
+      x = 100;
     }
-    if (x < 0){
-      x = 0;
+    if (x < 100){
+      x = 100;
       disp.clear();
     }
   }
   
-  //Вывод значения x (частоты)
-  Serial.println(x);
-  
-  //disp.float_dot(x, 0); //вывод значения икса на дисплей с точностью 1 знака после запятой
-  disp.digit4(x);
+  disp.digit4(x);                     // вывод значения х на disp
   disp_isr();                         // динамическая индикация
 }
+
 void disp_isr() {
   if (micros() - dispIsrTimer > 300) {       // таймер динамической индикации
-    disp.timerIsr();                         // "пнуть" дисплей
+    disp.timerIsr();                       
     dispIsrTimer = micros();                 // сбросить таймер
   }
 }
+
 // символы для дисплея
 void symbols() {
   SYM[0] = 0xC0; //0
@@ -86,6 +83,4 @@ void symbols() {
   SYM[17] = 0b01111000; //7.
   SYM[18] = 0b00000000; //8.
   SYM[19] = 0b00010000; //9.
- 
-
 }
