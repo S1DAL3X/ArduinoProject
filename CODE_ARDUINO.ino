@@ -29,6 +29,9 @@ void loop(){
   //Получения состояния кнопки 2
   int buttonState2 = digitalRead(PIN_BUTTON_2);
   
+  //В Arduino Nano все контакты настроены на режим чтения
+  //по умолчанию, по этому команду pinMode(OUTPUT) можно не использовать
+  
   if (buttonState1){
     x += 50;
     delay(400);
